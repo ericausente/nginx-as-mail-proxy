@@ -69,3 +69,88 @@ swaks --to kushikimi.ausente@example.com --from sender@example.com --server 54.1
 ```
 
 This command will display the SMTP interaction, confirming the email's successful transmission.
+
+
+Mastering SMTP (Simple Mail Transfer Protocol) and IMAP (Internet Message Access Protocol) using Telnet is a great way to understand the underlying mechanics of email transmission and retrieval. However, it's important to note that Telnet, being a plaintext protocol, isn't secure for transmitting sensitive information like email credentials. For learning purposes, ensure you're working in a controlled and secure environment.
+
+To simulate sending an email via SMTP using Telnet, you can convert the Swaks (Swiss Army Knife SMTP) command you provided into Telnet commands. Here's how you can do it:
+
+```
+telnet your-server-ip 1025
+```
+
+Greet the Mail Server with HELO or EHLO:
+```
+EHLO ip-172-16-15-155.ap-southeast-1.compute.internal
+```
+
+Set the Sender Address:
+```MAIL FROM:<sender@example.com>```
+
+Set the Recipient Address:
+```
+RCPT TO:<kushikimi.ausente@gmail.com>
+```
+Compose the Message:
+```
+DATA
+```
+
+After entering DATA, write your message. Typically, you start with headers like Subject:, followed by a blank line, and then the body of your message.
+```
+Date: Thu, 30 Nov 2023 11:01:33 +0000
+To: kushikimi.ausente@gmail.com
+From: sender@example.com
+Subject: test Thu, 30 Nov 2023 11:01:33 +0000
+Message-Id: <20231130110133.030313@ip-172-16-15-155.ap-southeast-1.compute.internal>
+X-Mailer: swaks v20170101.0 jetmore.org/john/code/swaks/
+```
+
+End the Message:
+```
+<ENTER>
+This is a test E-mail.
+<ENTER>
+.
+```
+
+Typing a period (.) on a line by itself ends the message input.
+
+Close the Connection:
+```
+QUIT
+```
+
+Sample output: 
+```
+$ telnet 54.169.103.XX 1025
+Trying 54.169.103.66...
+Connected to 54.169.103.XX.
+Escape character is '^]'.
+220 mailhog.example ESMTP MailHog
+EHLO ip-172-16-15-155.ap-southeast-1.compute.internal
+250-Hello ip-172-16-15-155.ap-southeast-1.compute.internal
+250-PIPELINING
+250 AUTH PLAIN
+MAIL FROM:<sender@example.com>
+250 Sender sender@example.com ok
+RCPT TO:<kushikimi.ausente@gmail.com>
+250 Recipient kushikimi.ausente@gmail.com ok
+DATA
+354 End data with <CR><LF>.<CR><LF>
+Date: Thu, 30 Nov 2023 11:01:33 +0000
+To: kushikimi.ausente@gmail.com
+From: sender@example.com
+Subject: test Thu, 30 Nov 2023 11:01:33 +0000
+Message-Id: <20231130110133.030313@ip-172-16-15-155.ap-southeast-1.compute.internal>
+X-Mailer: swaks v20170101.0 jetmore.org/john/code/swaks/
+
+This is a test mailing
+
+.
+250 Ok: queued as Ia1s2drgDIcEcZNz5jupyP6Cr7Y6JfAwUJnXgL0YGDE=@mailhog.example
+QUIT
+221 Bye
+Connection closed by foreign host.
+```
+
