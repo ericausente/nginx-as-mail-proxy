@@ -124,7 +124,7 @@ QUIT
 Sample output: 
 ```
 $ telnet 54.169.103.XX 1025
-Trying 54.169.103.66...
+Trying 54.169.103.XX...
 Connected to 54.169.103.XX.
 Escape character is '^]'.
 220 mailhog.example ESMTP MailHog
