@@ -85,7 +85,9 @@ EHLO ip-172-16-15-155.ap-southeast-1.compute.internal
 ```
 
 Set the Sender Address:
-```MAIL FROM:<sender@example.com>```
+```
+MAIL FROM:<sender@example.com>
+```
 
 Set the Recipient Address:
 ```
