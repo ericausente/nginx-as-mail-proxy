@@ -156,3 +156,51 @@ QUIT
 Connection closed by foreign host.
 ```
 
+
+# SMTP/IMAP 2-in-1 Server 
+I set up an SMTP/IMAP server using [docker-testing-mail](https://github.com/jbchouinard/docker-testing-mail) and testing it through Telnet and OpenSSL. The server was deployed on an AWS EC2 instance with appropriate security group configurations to allow ports 143 (IMAP), 993 (IMAPS), and 25 (SMTP).
+
+## Testing Procedure
+
+Sending Mail via SMTP (Port 25)
+Telnet Connection to SMTP Server:
+```
+[ec2-user@ip-172-16-15-155 ~]$ telnet 54.169.103.66 25
+Trying 54.169.103.66...
+Connected to 54.169.103.66.
+Escape character is '^]'.
+220 5f31557dd9ad ESMTP Postfix (Ubuntu)
+EHLO 54.169.103.66
+250-5f31557dd9ad
+...
+250 SMTPUTF8
+MAIL FROM:<sender@example.com>
+250 2.1.0 Ok
+RCPT TO:<alice@local.test>
+250 2.1.5 Ok
+DATA
+354 End data with <CR><LF>.<CR><LF>
+...
+.
+250 2.0.0 Ok: queued as 02CB559609F8
+QUIT
+221 2.0.0 Bye
+Connection closed by foreign host.
+```
+
+Reading Mail via IMAP (Port 993)
+OpenSSL Connection to IMAP Server:
+```
+[ec2-user@ip-172-16-15-155 ~]$ openssl s_client -connect 54.169.103.66:993
+...
+* OK [CAPABILITY IMAP4rev1 LITERAL+ SASL-IR LOGIN-REFERRALS ID ENABLE IDLE AUTH=PLAIN AUTH=LOGIN] Dovecot ready.
+a login alice@local.test password123
+a OK [CAPABILITY IMAP4rev1 LITERAL+ SASL-IR LOGIN-REFERRALS ID ENABLE IDLE SORT SORT=DISPLAY THREAD=REFERENCES THREAD=REFS THREAD=ORDEREDSUBJECT MULTIAPPEND URL-PARTIAL CATENATE UNSELECT CHILDREN NAMESPACE UIDPLUS LIST-EXTENDED I18NLEVEL=1 CONDSTORE QRESYNC ESEARCH ESORT SEARCHRES WITHIN CONTEXT=SEARCH LIST-STATUS BINARY MOVE SPECIAL-USE] Logged in
+a select INBOX
+* FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+...
+* 1 EXISTS
+a fetch 1:* full
+* 1 FETCH (FLAGS (\Recent) INTERNALDATE "02-Dec-2023 07:51:34 +0000" RFC822.SIZE 755 ENVELOPE ("Thu, 30 Nov 2023 11:01:33 +0000" "test Thu, 30 Nov 2023 11:01:33 +0000" ((NIL NIL "sender" "example.com")) ((NIL NIL "sender" "example.com")) ((NIL NIL "sender" "example.com")) ((NIL NIL "kushikimi.ausente" "gmail.com")) NIL NIL NIL "<20231130110133.030313@ip-172-16-15-155.ap-southeast-1.compute.internal>") BODY ("text" "plain" ("charset" "us-ascii") NIL NIL "7bit" 26 2))
+a OK Fetch completed (0.002 + 0.000 secs).
+```
